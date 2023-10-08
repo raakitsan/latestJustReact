@@ -52,16 +52,12 @@ const columns = [
     isResizable: true,
   },
 ];
-// Test items
+
+// Test tems
 let items = [];
 
 const EnrolList = (props) => {
   useEffect(() => {
-    const curItemKey = props.studentDetails.key;
-    if (curItemKey) {
-      items = [...items, props.studentDetails];
-      props.setStudentDetails({});
-    }
     // Execute deletion on the selected item.
     if (props.action === "delete") {
       // filter the selected item
@@ -73,7 +69,21 @@ const EnrolList = (props) => {
       // update seats
       props.restoreSeats(deleteItem.program);
     }
+    // Update the list items with the student details after rendering
+    const curItemKey = props.studentDetails.key;
+    if (curItemKey) {
+      const i = items.findIndex((item) => item.key === curItemKey);
+      if (i > -1) {
+        items = items.map((item) =>
+          item.key === curItemKey ? props.studentDetails : item
+        );
+      } else {
+        items = [...items, props.studentDetails];
+      }
+      props.setStudentDetails({});
+    }
   }, [props]);
+
   return (
     <div className="enrolList">
       <DetailsList items={items} columns={columns} />
